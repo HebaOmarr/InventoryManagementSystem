@@ -20,8 +20,11 @@ namespace InventoryManagementSystem.DAL.Repository.Contract
 
         //REad------------------------
         Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToke = default,string? Selector = null);
-        Task<IEnumerable<TEntity>> GetAllWithFilter(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToke = default);
+        Task<IEnumerable<TEntity>> GetAllWithFilter(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToke = default,string? Selector = null);
         Task<IEnumerable<TEntity>> ReadAllAsync( CancellationToken cancellationToke = default, string? Selector = null);
+
+
+
     }
 
 }

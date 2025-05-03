@@ -8,6 +8,7 @@ using InventoryManagementSystem.BLL.DTOs.Product;
 using InventoryManagementSystem.BLL.DTOs.Warehouse;
 using InventoryManagementSystem.BLL.DTOs.WarehouseProduct;
 using InventoryManagementSystem.Entities.Model;
+using System.Data;
 
 namespace InventoryManagementSystem.API.MappingProfile
 {
@@ -29,7 +30,7 @@ namespace InventoryManagementSystem.API.MappingProfile
             CreateMap<Product, ProductDetails>().ReverseMap();
             CreateMap<Product, ProductStockREsponse>().ForMember(des => des.ProductName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(des => des.ProductId, opt => opt.MapFrom(src => src.ID));
-            CreateMap<InventoryTransaction, TransactionHistorResponse>();
+            CreateMap<InventoryTransaction, TransactionHistorResponse>().ReverseMap();
 
 
 

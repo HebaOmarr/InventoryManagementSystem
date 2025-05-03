@@ -79,8 +79,12 @@ namespace InventoryManagementSystem.DAL.Repository
         }
 
 
-        public async Task<IEnumerable<TEntity>> GetAllWithFilter(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TEntity>> GetAllWithFilter(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default, string? Selector = null)
         {
+            if (Selector is not null)
+            {
+                return await _applicationDBContext.Set<TEntity>().Include(Selector).Where(expression).ToListAsync(cancellationToken);
+            }
             return await _applicationDBContext.Set<TEntity>().Where(expression).ToListAsync(cancellationToken);
         }
 
@@ -94,8 +98,7 @@ namespace InventoryManagementSystem.DAL.Repository
 
         }
 
-
-
+      
     } 
 }
 

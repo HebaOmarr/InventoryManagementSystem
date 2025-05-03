@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InventoryManagementSystem.BLL.DTOs.Reports;
+using InventoryManagementSystem.BLL.Filters;
 using InventoryManagementSystem.DAL.UnitOfWork;
 using InventoryManagementSystem.Entities.Enums;
 using MediatR;
@@ -30,6 +31,38 @@ namespace InventoryManagementSystem.BLL.CQRS.Queries.Reports
         public int? ProductCategoryId { get; set; }
         public TransactionType? TransactionType { get; set; }
 
+
+
+        public List<IFilter>GetFilters()
+        {
+            var filters = new List<IFilter>();
+            if (ProductId != null)
+            {
+                filters.Add(new ProductFilter(ProductId.Value));
+            }
+            if (FromDate != null)
+            {
+                filters.Add(new FromDateFilter(FromDate.Value));
+            }
+            if (ToDate != null)
+            {
+                filters.Add(new ToDateFilter(ToDate.Value));
+            }
+            if (ProductCategoryId != null)
+            {
+                filters.Add(new CategoryFilter(ProductCategoryId.Value));
+            }
+            if (TransactionType != null)
+            {
+                filters.Add(new TranscationTypeFilter(TransactionType.Value));
+            }
+            return filters;
+        }
+
+
+
+
+
     }
     public class TransactionHistoryQueryHandler : IRequestHandler<TransactionHistoryQuery, IEnumerable<TransactionHistorResponse>>
     {
@@ -43,34 +76,29 @@ namespace InventoryManagementSystem.BLL.CQRS.Queries.Reports
         }
         public async Task<IEnumerable<TransactionHistorResponse>?> Handle(TransactionHistoryQuery request, CancellationToken cancellationToken)
         {
+            var TransacarionsResult = await unitOfWork.InventoryTransaction.ReadAllAsync(cancellationToken,"Product");
 
-          
-
-                var Transacarions = await unitOfWork.InventoryTransaction.ReadAllAsync(cancellationToken, "Product");
-
-                if (request.ProductId != null)
+            List<IFilter> filters = request.GetFilters();
+            if (filters.Count > 0)
+            {
+                foreach (var filter in filters)
                 {
-                    Transacarions = Transacarions.Where(e => e.ProductId == request.ProductId);
-                }
-                if (request.TransactionType != null)
-                {
-                    Transacarions = Transacarions.Where(e => e.TransactionType == request.TransactionType);
-                }
-                if (request.FromDate != null)
-                {
-                    Transacarions = Transacarions.Where(e => e.TransactionDate >= request.FromDate);
+                    
+                    TransacarionsResult = TransacarionsResult.Where(filter.GetExpression());
 
                 }
-                if (request.ToDate != null)
-                {
-                    Transacarions = Transacarions.Where(e => e.TransactionDate <= request.ToDate);
-                }
-                if (request.ProductCategoryId != null)
-                {
-                    Transacarions = Transacarions.Where(e => e.Product.categoryId == request.ProductCategoryId);
-                }
-                return mapper.Map<IEnumerable<TransactionHistorResponse>>(Transacarions);
-            
+            }
+            var transactionResponse = TransacarionsResult.Select(x => new TransactionHistorResponse { 
+            Quantity = x.Quantity,
+                TransactionDate = x.TransactionDate,
+                TransactionType=x.TransactionType,
+                ProductId=x.ProductId,
+                FromWarehouseId=x.FromWarehouseId,
+                ToWarehouseId=x.ToWarehouseId,
+            });
+            return transactionResponse;
+              //  return mapper.Map<IEnumerable<TransactionHistorResponse>>(TransacarionsResult);
+
         }
     }
 }
