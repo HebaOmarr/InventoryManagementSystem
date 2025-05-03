@@ -14,6 +14,7 @@ namespace InventoryManagementSystem.Entities.Model
         public int Quantity { get; set; }
         public DateTime TransactionDate { get; set; }
         public TransactionType TransactionType { get; set; }
+        public bool IsArchived { get; set; } = false;
 
         public int ProductId { get; set; }
         [ForeignKey(nameof(ProductId))]

@@ -164,7 +164,9 @@ namespace InventoryManagementSystem.API
             app.UseHangfireDashboard("/Dashborad");
              
             RecurringJob.AddOrUpdate<LowStockBackgrounJob>("LowStockNotification", x => x.RunTask(), Cron.Minutely);
-          //RecurringJob.AddOrUpdate(()=>Debug.WriteLine("Hello World"), Cron.Minutely);
+            RecurringJob.AddOrUpdate<ArchiveTransactionData>("Archived", x => x.RunTask(), Cron.Monthly);
+
+            //RecurringJob.AddOrUpdate(()=>Debug.WriteLine("Hello World"), Cron.Minutely);
 
             app.UseRateLimiter();
 
