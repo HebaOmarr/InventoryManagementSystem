@@ -15,6 +15,10 @@ using Serilog.Sinks.MSSqlServer;
 using InventoryManagementSystem.BLL.CQRS.Queries.Products;
 using Microsoft.AspNetCore.RateLimiting;
 using InventoryManagementSystem.API.MiddleWare;
+using InventoryManagementSystem.BLL.Notification;
+using Hangfire;
+using InventoryManagementSystem.BLL.BackgroundJob;
+using System.Diagnostics;
 
 
 namespace InventoryManagementSystem.API
@@ -44,6 +48,7 @@ namespace InventoryManagementSystem.API
             builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<GlobalErrorHandler>();
+            builder.Services.AddScoped<INotificarionService, LogNotification>();
 
             builder.Services.AddMemoryCache();
 
@@ -69,10 +74,8 @@ namespace InventoryManagementSystem.API
                   .AddEntityFrameworkStores<ApplicationDBContext>()
                   .AddDefaultTokenProviders();
 
-         //   builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-         //.AddEntityFrameworkStores<ApplicationDBContext>()
-         //.AddDefaultTokenProviders();
-
+         builder.Services.AddHangfire(opt=>opt.UseSqlServerStorage(builder.Configuration.GetConnectionString("DataBaseConnectionString")));
+            builder.Services.AddHangfireServer();
 
 
             builder.Services.AddAuthentication(options => {
@@ -157,7 +160,11 @@ namespace InventoryManagementSystem.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-         //   app.UseMiddleware<GlobalErrorHandler>();
+            //   app.UseMiddleware<GlobalErrorHandler>();
+            app.UseHangfireDashboard("/Dashborad");
+             
+            RecurringJob.AddOrUpdate<LowStockBackgrounJob>("LowStockNotification", x => x.RunTask(), Cron.Minutely);
+          //RecurringJob.AddOrUpdate(()=>Debug.WriteLine("Hello World"), Cron.Minutely);
 
             app.UseRateLimiter();
 
