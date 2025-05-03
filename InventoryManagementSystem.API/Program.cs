@@ -63,9 +63,9 @@ namespace InventoryManagementSystem.API
             {
                 options.AddConcurrencyLimiter("ConcurrencyLimiter", builder =>
                 {
-                    builder.PermitLimit = 1;
+                    builder.PermitLimit = 3;
                     builder.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
-                    builder.QueueLimit = 1;
+                    builder.QueueLimit = 10;
                 }).RejectionStatusCode = 429;
 
             });
