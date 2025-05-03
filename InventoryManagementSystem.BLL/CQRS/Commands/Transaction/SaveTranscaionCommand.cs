@@ -21,7 +21,6 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Transaction
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly UserManager<ApplicationUser> userManager;
         private readonly IHttpContextAccessor httpContextAccessor;
 
         public SaveTransactionCommandHandler(IUnitOfWork unitOfWork,IMapper mapper,
@@ -29,7 +28,6 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Transaction
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.userManager = userManager;
            this.httpContextAccessor = httpContextAccessor;
         }
         public async Task<bool> Handle(SaveTranscaionCommand request, CancellationToken cancellationToken)

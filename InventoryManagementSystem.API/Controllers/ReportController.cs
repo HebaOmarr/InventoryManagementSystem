@@ -3,6 +3,7 @@ using InventoryManagementSystem.BLL.CQRS.Queries.Products;
 using InventoryManagementSystem.BLL.CQRS.Queries.Reports;
 using InventoryManagementSystem.BLL.DTOs.Reports;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -13,7 +14,7 @@ namespace InventoryManagementSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //        [Authorize]
+        [Authorize]
 
     public class ReportController : ControllerBase
     {
