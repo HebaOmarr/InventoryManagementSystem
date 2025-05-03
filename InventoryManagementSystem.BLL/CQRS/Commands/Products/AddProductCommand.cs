@@ -18,6 +18,7 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
     public class CreateProductResult
     {
       public int Id { get; set; }
+        public bool IsSuccess { get; set; }
 
     }
 
@@ -49,13 +50,13 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
             bool categoryIsExit = await unitOfWork.Category.IsExit(x => x.ID == request.categoryId, cancellationToken);
             if(!categoryIsExit)
             {
-                throw new Exception("Category Not Found");
+                new CreateProductResult() { Id=0, IsSuccess = false };
             }
             var product = mapper.Map<Product>(request);
             await unitOfWork.Product.AddAsync(product, cancellationToken);
             await unitOfWork.Save(cancellationToken);
             logger.LogInformation("New Product added successfully");
-            return new CreateProductResult { Id = product.ID };
+            return new CreateProductResult { Id = product.ID, IsSuccess = true };
         }
     }
     

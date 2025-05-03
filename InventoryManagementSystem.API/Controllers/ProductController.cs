@@ -32,7 +32,11 @@ namespace InventoryManagementSystem.API.Controllers
                 return ApiResponseResult<CreateProductResult>.Error( "Invalid Model State");
 
             var result = await mediator.Send(request, cancellationToken);
+            if(result.IsSuccess)
             return ApiResponseResult<CreateProductResult>.Success(result, "Product Created Successfully");
+            return ApiResponseResult<CreateProductResult>.Error("Product Adding Failed");
+
+
         }
 
 
@@ -45,7 +49,10 @@ namespace InventoryManagementSystem.API.Controllers
                 return ApiResponseResult<UpdateProductResult>.Error( "Invalid Model State");
 
             var result = await mediator.Send(new UpdateProductCommand { productId=id,updateProductDTO=request}, cancellationToken);
-            return ApiResponseResult<UpdateProductResult>.Success(result, "Product Updated Successfully");
+            if (result.IsSuccess)
+                return ApiResponseResult<UpdateProductResult>.Success(result, "Product Updated Successfully");
+            return ApiResponseResult<UpdateProductResult>.Error("Product Update Failed");
+
 
         }
 

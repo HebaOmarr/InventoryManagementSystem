@@ -35,19 +35,20 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Transaction
             var userId = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
             {
-                throw new Exception("User not found");
+                //throw new Exception("User not found");
+                return false;
             }
 
             bool Exist = await unitOfWork.Product.IsExit(e => e.ID == request.createTransactionDTO.ProductId);
-            if (!Exist)            
-                throw new Exception("Product not found");
+            if (!Exist) return false;
+
 
             if (request.createTransactionDTO.FromWarehouseId != null)
             {
                 Exist = await unitOfWork.Warehouse.IsExit(e => e.ID == request.createTransactionDTO.FromWarehouseId);
                 if (!Exist)
                 {
-                    throw new Exception("From Warehouse not found");
+                    return false;
                 }
             }
             if (request.createTransactionDTO.ToWarehouseId != null)
@@ -55,7 +56,7 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Transaction
                 Exist = await unitOfWork.Warehouse.IsExit(e => e.ID == request.createTransactionDTO.ToWarehouseId);
                 if (!Exist)
                 {
-                    throw new Exception("To Warehouse not found");
+                    return false;
                 }
             }
             InventoryTransaction inventoryTransaction=mapper.Map<InventoryTransaction>(request.createTransactionDTO);

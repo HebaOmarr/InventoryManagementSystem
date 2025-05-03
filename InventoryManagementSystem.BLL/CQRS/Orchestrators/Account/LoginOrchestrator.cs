@@ -15,10 +15,11 @@ namespace InventoryManagementSystem.BLL.CQRS.Orchestrators.Account
     {
         public string Token { get; set; } = null!;
         public DateTime Expired { get; set; }
+        public bool IsSuccess { get; set; }
     }
     public class LoginOrchestrator : IRequest<LoginOrchestratorResponse>
     {
-       public LoginRequest loginRequest { get; set; } 
+        public LoginRequest loginRequest { get; set; }
     }
     public class LoginOrchestratorHandler : IRequestHandler<LoginOrchestrator, LoginOrchestratorResponse>
     {
@@ -36,20 +37,26 @@ namespace InventoryManagementSystem.BLL.CQRS.Orchestrators.Account
                 loginRequest = request.loginRequest
             }, cancellationToken);
 
-            if (result == null)
+            if (!result.IsSuccess)
             {
-                throw new Exception("User Not found");
-            }
-            
+                return new LoginOrchestratorResponse()
+                {
+                    Token = null,
+                    Expired = DateTime.Now,
+                    IsSuccess = false
+                };
+                  }
+
             string token = await mediator.Send(new GenerateTokenCommand()
             {
                 user = result!.ApplicationUser,
                 Expired = result.Expired
             }, cancellationToken);
-            return new LoginOrchestratorResponse()   
+            return new LoginOrchestratorResponse()
             {
                 Token = token,
-                Expired = result.Expired
+                Expired = result.Expired,
+                IsSuccess = true
             };
         }
     }

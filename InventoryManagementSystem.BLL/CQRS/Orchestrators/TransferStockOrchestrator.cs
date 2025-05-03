@@ -24,11 +24,9 @@ namespace InventoryManagementSystem.BLL.CQRS.Orchestrators
         public async Task<bool> Handle(TransferStockOrchestrator request, CancellationToken cancellationToken)
         {
 
-
-
             bool result = await mediator.Send(new UpdateWarehouseOrchestrator
             {
-                WarehouseId = (int)request.createTransactionDTO.FromWarehouseId,
+                WarehouseId = request.createTransactionDTO.FromWarehouseId!.Value,
                 ProductId = request.createTransactionDTO.ProductId,
                 Quantity = request.createTransactionDTO.Quantity,
                   IsRemoveStock = true
@@ -37,7 +35,7 @@ namespace InventoryManagementSystem.BLL.CQRS.Orchestrators
             if(!result) return false;
             await mediator.Send(new UpdateWarehouseOrchestrator
             {
-                WarehouseId = (int)request.createTransactionDTO.ToWarehouseId,
+                WarehouseId = request.createTransactionDTO.ToWarehouseId!.Value,
                 ProductId = request.createTransactionDTO.ProductId,
                 Quantity = request.createTransactionDTO.Quantity,
                 IsRemoveStock = false

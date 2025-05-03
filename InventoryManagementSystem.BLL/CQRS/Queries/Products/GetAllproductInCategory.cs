@@ -30,7 +30,7 @@ namespace InventoryManagementSystem.BLL.CQRS.Queries.Products
         bool CategoryIsExist = await unitOfWork.Category.IsExit(e => e.ID == request.CategoryId, cancellationToken);
             if(!CategoryIsExist)
             {
-                throw new Exception("Category Not Found");
+                return null;
             }
             var products = await unitOfWork.Product.GetAllWithFilter(e=>e.categoryId==request.CategoryId,cancellationToken);
             return mapper.Map<IEnumerable<ProductDetails>>(products);

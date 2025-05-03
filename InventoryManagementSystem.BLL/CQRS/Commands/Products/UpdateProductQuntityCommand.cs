@@ -14,6 +14,8 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
         public int Quantity { get; set; }
         public int ProductId { get; set; }
         public bool IsRemoveStock { get; set; }
+        public bool IsSuccess { get; set; }
+
     }
     public class UpdateProductQuntityCommandHandler : IRequestHandler<UpdateProductQuntityCommand,bool>
     {
@@ -29,7 +31,7 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
         {
             Product? product = await unitOfWork.Product.GetItemAsync(e => e.ID == request.ProductId, cancellationToken);
             if (product == null)
-                throw new Exception("Product not found");
+                return false;
 
             if (request.IsRemoveStock)
             {  if(product.Quantity<request.Quantity) 

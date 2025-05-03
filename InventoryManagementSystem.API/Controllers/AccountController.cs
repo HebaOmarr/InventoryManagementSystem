@@ -54,7 +54,7 @@ namespace InventoryManagementSystem.API.Controllers
                 return ApiResponseResult<LoginOrchestratorResponse>.Error("invalid Model state");
             }
             var result =await mediator.Send(new LoginOrchestrator { loginRequest= model },cancellationToken);
-            if (result != null)
+            if (result.IsSuccess)
             {
                 return ApiResponseResult<LoginOrchestratorResponse>.Success(result, "Login Successfully");
 

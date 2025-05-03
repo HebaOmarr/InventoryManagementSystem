@@ -29,7 +29,8 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.WarehouseProductss
             var warehouseProduct = await unitOfWork.WarehouseProducts.GetItemAsync(x => x.WarehouseId == request.WarehouseId && x.ProductId == request.ProductId,cancellationToken);
             if (warehouseProduct == null)
             {
-                throw new Exception("No Product Found in WareHOuse");
+                //   throw new Exception("No Product Found in WareHOuse");
+                return false;
             }
 
             if (request.IsRemoveStock)

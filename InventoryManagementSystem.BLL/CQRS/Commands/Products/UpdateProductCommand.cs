@@ -16,6 +16,8 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
     public class UpdateProductResult
     {
         public int Id { get; set; }
+        public bool IsSuccess { get; set; }
+
 
     }
 
@@ -40,12 +42,12 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
         {
             Product? productIsExit = await unitOfWork.Product.GetItemAsync(e => e.ID == request.productId,cancellationToken);
             if (productIsExit == null)
-                throw new Exception("Product Not Found");
+               return new UpdateProductResult() { Id = 0, IsSuccess = false };
 
             bool categoryIsExit = await unitOfWork.Category.IsExit(x => x.ID == request.updateProductDTO.categoryId, cancellationToken);
             if (!categoryIsExit)
             {
-                throw new Exception("Category Not Found");
+                return new UpdateProductResult() { Id = 0, IsSuccess = false };
             }
 
 
@@ -57,9 +59,9 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
             if (Result)
             {
                 await unitOfWork.Save(cancellationToken);
-                return new UpdateProductResult { Id = productIsExit.ID };
+                return new UpdateProductResult { Id = productIsExit.ID ,IsSuccess=true};
             }
-             throw new Exception("Error While Update Product");
+            return new UpdateProductResult() { Id = 0, IsSuccess = false };
 
         }
     }

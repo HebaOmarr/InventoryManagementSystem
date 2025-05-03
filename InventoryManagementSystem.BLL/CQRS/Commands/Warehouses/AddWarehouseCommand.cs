@@ -34,9 +34,9 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Warehouses
               Name = request.warehouseDTO.Name,
                 Location = request.warehouseDTO.Location,
                 Capacity = request.warehouseDTO.Capacity
-            });
+            }, cancellationToken);
 
-            await unitOfWork.Save();
+            await unitOfWork.Save(cancellationToken);
             return true;
         }
     }

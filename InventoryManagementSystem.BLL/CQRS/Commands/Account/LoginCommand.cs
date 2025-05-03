@@ -16,7 +16,9 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Account
     public class LoginCommandResponse
     {
      public  ApplicationUser ApplicationUser { get; set; } 
-        public DateTime Expired { get; set; }  
+        public DateTime Expired { get; set; }
+        public bool IsSuccess { get; set; }
+
     }
     public class LoginCommand :IRequest<LoginCommandResponse>
     {
@@ -36,7 +38,12 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Account
             ApplicationUser? user = await _userManager.FindByEmailAsync(request.loginRequest.EmailAddress);
             if (user == null)
             {
-                throw new Exception("User Not found");
+              return  new LoginCommandResponse()
+                {
+                    ApplicationUser = null,
+                    Expired = DateTime.Now,
+                    IsSuccess = false
+                };
             }
             var result = await _userManager.CheckPasswordAsync(user, request.loginRequest.Password);
             if (result) {
@@ -44,13 +51,19 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Account
             }
             else
             {
-                throw new Exception("Invalid Password");
+                return new LoginCommandResponse()
+                {
+                    ApplicationUser = null,
+                    Expired = DateTime.Now,
+                    IsSuccess = false
+                };
             }
 
                 LoginCommandResponse loginCommandResponse = new LoginCommandResponse()
                 {
                     ApplicationUser = user,
-                    Expired = DateTime.Now.AddHours(3)
+                    Expired = DateTime.Now.AddHours(3),
+                    IsSuccess = true
                 };
             return loginCommandResponse;
         }
