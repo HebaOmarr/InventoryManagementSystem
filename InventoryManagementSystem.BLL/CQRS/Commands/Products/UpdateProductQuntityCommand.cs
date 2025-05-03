@@ -30,6 +30,7 @@ namespace InventoryManagementSystem.BLL.CQRS.Commands.Products
             Product? product = await unitOfWork.Product.GetItemAsync(e => e.ID == request.ProductId, cancellationToken);
             if (product == null)
                 throw new Exception("Product not found");
+
             if (request.IsRemoveStock)
             {  if(product.Quantity<request.Quantity) 
                 return false;

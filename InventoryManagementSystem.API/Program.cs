@@ -14,6 +14,7 @@ using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using InventoryManagementSystem.BLL.CQRS.Queries.Products;
 using Microsoft.AspNetCore.RateLimiting;
+using InventoryManagementSystem.API.MiddleWare;
 
 
 namespace InventoryManagementSystem.API
@@ -42,6 +43,7 @@ namespace InventoryManagementSystem.API
             builder.Services.AddScoped<IWarehouseProductsRepository, WarehouseProductsRepository>();
             builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<GlobalErrorHandler>();
 
             builder.Services.AddMemoryCache();
 
@@ -141,6 +143,7 @@ namespace InventoryManagementSystem.API
                ).CreateLogger();
 
             builder.Host.UseSerilog();
+           builder.Services.AddHttpContextAccessor();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -154,6 +157,8 @@ namespace InventoryManagementSystem.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+         //   app.UseMiddleware<GlobalErrorHandler>();
+
             app.UseRateLimiter();
 
             app.UseAuthorization();

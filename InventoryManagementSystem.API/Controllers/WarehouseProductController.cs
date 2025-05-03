@@ -42,5 +42,7 @@ namespace InventoryManagementSystem.API.Controllers
             }
             return Ok(resuilt);
         }
+
+
     }
 }

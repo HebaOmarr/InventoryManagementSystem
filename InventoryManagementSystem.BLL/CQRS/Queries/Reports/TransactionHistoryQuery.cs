@@ -88,16 +88,8 @@ namespace InventoryManagementSystem.BLL.CQRS.Queries.Reports
 
                 }
             }
-            var transactionResponse = TransacarionsResult.Select(x => new TransactionHistorResponse { 
-            Quantity = x.Quantity,
-                TransactionDate = x.TransactionDate,
-                TransactionType=x.TransactionType,
-                ProductId=x.ProductId,
-                FromWarehouseId=x.FromWarehouseId,
-                ToWarehouseId=x.ToWarehouseId,
-            });
-            return transactionResponse;
-              //  return mapper.Map<IEnumerable<TransactionHistorResponse>>(TransacarionsResult);
+          
+                return mapper.Map<IEnumerable<TransactionHistorResponse>>(TransacarionsResult);
 
         }
     }
